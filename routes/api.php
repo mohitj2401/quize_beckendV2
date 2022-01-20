@@ -20,9 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/register', [UserController::class, 'register']);
-Route::get('/get/user/{api_token}', [UserController::class, 'getUser']);
-Route::post('/update/user/{api_token}', [UserController::class, 'updateUser']);
-Route::post('/update/password/{api_token}', [UserController::class, 'updatePass']);
+
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/quiz/create/{api_token}', [QuizController::class, 'store']);
 Route::get('/quiz/get/{subject}/{api_token}', [QuizController::class, 'getQuiz']);
@@ -43,4 +41,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/user', [UserController::class, 'user']);
     Route::post('/logout', [UserController::class, 'logout']);
+    Route::post('/update-details', [UserController::class, 'updateUser']);
+    Route::post('/update-password', [UserController::class, 'updatePass']);
 });

@@ -137,63 +137,55 @@ class UserController extends Controller
     }
 
 
-    public function updateUser(Request $request, $api_token)
+    public function updateUser(Request $request)
     {
-        if ($api_token) {
-            $user = User::where('api_token', $api_token)->first();
-            if ($user) {
-                try {
-                    $user->name = $request->name;
-                    $user->email = $request->email;
-                    $user->save();
-                    $data['status'] = '200';
-                    $data['api_token'] = $user->api_token;
-                    $data['msg'] = 'User detail Updated Successfully';
-                } catch (\Throwable $th) {
-                    $data['status'] = '500';
-                    $data['msg'] = 'Please Try Again After Some Time';
-                    $data['th'] = $th;
-                }
-            } else {
-                $data['status'] = '511';
-                $data['msg'] = 'User Not Found';
-            }
+
+        $user = auth()->user();
+
+        try {
+            $user->name = $request->name;
+            // $user->email = $request->email;
+            $user->save();
+            $data = [
+                'status' => 200,
+                'message' => 'User Detail Updated',
+                'output' => $user
+            ];
+        } catch (\Throwable $th) {
+            $data['status'] = '500';
+            $data['message'] = 'Please Try Again After Some Time';
+            $data['th'] = $th;
         }
+
         return response()->json($data);
     }
-    public function updatePass(Request $request, $api_token)
+    public function updatePass(Request $request)
     {
-        if ($api_token) {
-            $user = User::where('api_token', $api_token)->first();
+
+
+        try {
+            $user = auth()->user();
             if ($user) {
-
-                try {
-
-                    if ($user) {
-                        if (Hash::check($request->old_pass, $user->password)) {
-                            $user->password = Hash::make($request->new_pass);
-                            $user->save();
-                            $data['status'] = '200';
-                            $data['msg'] = 'Logged In Successfully';
-                            $data['api_token'] = $user->api_token;
-                        } else {
-                            $data['status'] = '203';
-                            $data['msg'] = "Old Password Doesn't not match. plaese try again!";
-                        }
-                    } else {
-                        $data['status'] = '201';
-                        $data['msg'] = 'Account deactivated please contact admin';
-                    }
-                } catch (\Throwable $th) {
-                    $data['status'] = '500';
-                    $data['msg'] = 'Please Try Again After Some Time';
-                    $data['th'] = $th;
+                if (Hash::check($request->old_pass, $user->password)) {
+                    $user->password = Hash::make($request->new_pass);
+                    $user->save();
+                    $data['status'] = '200';
+                    $data['message'] = 'Logged In Successfully';
+                    $data['output'] = $user;
+                } else {
+                    $data['status'] = '203';
+                    $data['message'] = "Old Password Doesn't not match. plaese try again!";
                 }
             } else {
-                $data['status'] = '511';
-                $data['msg'] = 'User Not Found';
+                $data['status'] = '201';
+                $data['message'] = 'Account deactivated please contact admin';
             }
+        } catch (\Throwable $th) {
+            $data['status'] = '500';
+            $data['msg'] = 'Please Try Again After Some Time';
+            $data['th'] = $th;
         }
+
         return response()->json($data);
     }
 }
