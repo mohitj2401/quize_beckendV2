@@ -12,54 +12,62 @@ class UserController extends Controller
 {
     public function register(Request $request)
     {
-        $user_details = request()->only([
-            'name', 'email',
+        $validate = Validator($request->all(), [
+            'name' => 'required',
+            'email' => 'required|unique:users,email',
+            'password' => 'required',
 
         ]);
-
-
-
-        $user_details['password'] = Hash::make(request()->password);
-        $user_details['usertype_id'] = 3;
-
-        $data = User::create($user_details);
-
-
-        if (!$data->api_token) {
-            $tokenResult = $data->createToken('Personal Access Token');
-            $token = $tokenResult->accessToken;
-            $response = [
-
-                'user' => $data,
-                'access_token' => $tokenResult->accessToken,
-                'token_type' => 'Bearer',
-                'expires_at' => Carbon::parse(
-                    $tokenResult->token->expires_at
-                )->toDateTimeString()
-            ];
-
-            User::where('id', $data->id)->update(['api_token' => $token]);
+        if ($validate->fails()) {
+            return response()->json($validate->errors());
         } else {
-            $tokenResult = $data->createToken('Personal Access Token');
+            $user_details = request()->only([
+                'name', 'email',
 
-            $response = [
-                'user' => $data,
-                'access_token' => $data->api_token,
-                'token_type' => 'Bearer',
-                'expires_at' => Carbon::parse(
-                    $tokenResult->token->expires_at
-                )->toDateTimeString()
+            ]);
+
+
+
+            $user_details['password'] = Hash::make(request()->password);
+            $user_details['usertype_id'] = 3;
+
+            $data = User::create($user_details);
+
+
+            if (!$data->api_token) {
+                $tokenResult = $data->createToken('Personal Access Token');
+                $token = $tokenResult->accessToken;
+                $response = [
+
+                    'user' => $data,
+                    'access_token' => $tokenResult->accessToken,
+                    'token_type' => 'Bearer',
+                    'expires_at' => Carbon::parse(
+                        $tokenResult->token->expires_at
+                    )->toDateTimeString()
+                ];
+
+                User::where('id', $data->id)->update(['api_token' => $token]);
+            } else {
+                $tokenResult = $data->createToken('Personal Access Token');
+
+                $response = [
+                    'user' => $data,
+                    'access_token' => $data->api_token,
+                    'token_type' => 'Bearer',
+                    'expires_at' => Carbon::parse(
+                        $tokenResult->token->expires_at
+                    )->toDateTimeString()
+                ];
+            }
+            $data =  [
+                'status' => 200,
+                'message' => "Register Sucessfully",
+                'output' => $response
             ];
+            return $data;
         }
-        $data =  [
-            'success' => 200,
-            'message' => "Register Sucessfully",
-            'output' => $response
-        ];
-        return $data;
     }
-
-
 
     public function user()
     {
@@ -75,65 +83,76 @@ class UserController extends Controller
         $request->user()->token()->revoke();
         User::where('id', auth()->user()->id)->update(['api_token' => '']);
         $output = [
-            'success' => 200,
+            'status' => 200,
             'message' => 'Successfully logged out',
             'output' => []
         ];
         return $output;
     }
-    public function login()
+    public function login(Request $request)
     {
-        $user = User::where('email', request()->email)->first();
-        if ($user) {
-            if (Hash::check(request()->password, $user->password)) {
+        $validate = Validator($request->all(), [
+            'email' => 'required|exists:users,email|email',
+            'password' => 'required',
 
-                if (!$user->api_token) {
-                    $tokenResult = $user->createToken('Personal Access Token');
-                    $token = $tokenResult->accessToken;
-                    $response = [
-                        'user' => $user,
-                        'access_token' => $token,
-                        'token_type' => 'Bearer',
-                        'expires_at' => Carbon::parse(
-                            $tokenResult->token->expires_at
-                        )->toDateTimeString()
+        ], [
+            'email.exists' => "No account exist with this email address"
+        ]);
+        if ($validate->fails()) {
+            return response()->json($validate->errors());
+        } else {
+            $user = User::where('email', request()->email)->first();
+            if ($user) {
+                if (Hash::check(request()->password, $user->password)) {
+
+                    if (!$user->api_token) {
+                        $tokenResult = $user->createToken('Personal Access Token');
+                        $token = $tokenResult->accessToken;
+                        $response = [
+                            'user' => $user,
+                            'access_token' => $token,
+                            'token_type' => 'Bearer',
+                            'expires_at' => Carbon::parse(
+                                $tokenResult->token->expires_at
+                            )->toDateTimeString()
+                        ];
+
+                        User::where('id', $user->id)->update(['api_token' => $token]);
+                    } else {
+                        $tokenResult = $user->createToken('Personal Access Token');
+
+                        $response = [
+                            'user' => $user,
+                            'access_token' => $user->api_token,
+                            'token_type' => 'Bearer',
+                            'expires_at' => Carbon::parse(
+                                $tokenResult->token->expires_at
+                            )->toDateTimeString()
+                        ];
+                    }
+
+                    $data =  [
+                        'status' => 200,
+                        'message' => "Login Sucessfully",
+                        'output' => $response
                     ];
-
-                    User::where('id', $user->id)->update(['api_token' => $token]);
                 } else {
-                    $tokenResult = $user->createToken('Personal Access Token');
-
-                    $response = [
-                        'user' => $user,
-                        'access_token' => $user->api_token,
-                        'token_type' => 'Bearer',
-                        'expires_at' => Carbon::parse(
-                            $tokenResult->token->expires_at
-                        )->toDateTimeString()
+                    $data =  [
+                        'status' => 400,
+                        'message' => "Password mismatch",
+                        'output' => []
                     ];
                 }
-
-                $data =  [
-                    'success' => 200,
-                    'message' => "Login Sucessfully",
-                    'output' => $response
-                ];
             } else {
                 $data =  [
                     'success' => 400,
-                    'message' => "Password mismatch",
+                    'message' => "User does not exist",
                     'output' => []
                 ];
             }
-        } else {
-            $data =  [
-                'success' => 400,
-                'message' => "User does not exist",
-                'output' => []
-            ];
-        }
 
-        return $data;
+            return $data;
+        }
     }
 
 
