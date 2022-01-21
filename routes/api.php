@@ -23,16 +23,14 @@ Route::post('/register', [UserController::class, 'register']);
 
 Route::post('/login', [UserController::class, 'login']);
 // Route::post('/quiz/create/{api_token}', [QuizController::class, 'store']);
-Route::get('/quiz/get/{quiz_id}/{api_token}', [QuizController::class, 'getSingleQuiz']);
+// Route::get('/quiz/get/{quiz_id}/{api_token}', [QuizController::class, 'getSingleQuiz']);
 Route::post('/result/store/{api_token}', [ResultController::class, 'store']);
 Route::get('/result/getquiz/{api_token}', [ResultController::class, 'getPlayedQuiz']);
-Route::post('/quiz/delete/{api_token}/{quiz}', [QuizController::class, 'deleteQuiz']);
-Route::post('/question/create/{api_token}/{quiz}', [QuestionController::class, 'store']);
+// Route::post('/quiz/delete/{api_token}/{quiz}', [QuizController::class, 'deleteQuiz']);
+// Route::post('/question/create/{api_token}/{quiz}', [QuestionController::class, 'store']);
 // Route::get('/question/get/{api_token}/{quiz}', [QuestionController::class, 'getQuestion']);
 // Route::get('/subjects/get/{api_token}', [AppSubjectController::class, 'getSubjects']);
-Route::get('/subjects/search/{api_token}/{sub_name}', [AppSubjectController::class, 'getSearchSubjects']);
 Route::get('/download/result/{api_token}/{quiz_id}', [ResultController::class, 'pdfview']);
-Route::get('/result/search/{api_token}/{quiz_name}', [ResultController::class, 'getSearchQuiz']);
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/user', [UserController::class, 'user']);
@@ -43,4 +41,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/subjects', [AppSubjectController::class, 'getSubjects']);
     Route::get('/questions/{quiz}', [QuestionController::class, 'getQuestion']);
     Route::get('/quiz-detail/{quiz_id}', [QuizController::class, 'getSingleQuiz']);
+    Route::get('/subjects/search/{sub_name}', [AppSubjectController::class, 'getSearchSubjects']);
+    Route::get('/result/search/{quiz_name}', [ResultController::class, 'getSearchQuiz']);
 });

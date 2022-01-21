@@ -63,25 +63,25 @@ class ResultController extends Controller
     {
         // $encode=json_encode($request->data1);
         // $decode=json_decode($encode);
-        $data = array();
-        if ($api_token) {
-            $user = User::where('api_token', $api_token)->first();
-            if ($user) {
-                try {
-                    $quiz_ids = $user->result->pluck('quiz_id');
-                    $data['data'] = Quiz::where('title', 'LIKE', "%{$quiz_name}%")->whereIn('id', $quiz_ids)->get();
-                    $data['status'] = '200';
-                    $data['msg'] = 'Result Stored Successfully';
-                } catch (\Throwable $th) {
-                    $data['status'] = '500';
-                    $data['msg'] = $th;
-                }
-            } else {
-                $data['status'] = '511';
-                $data['msg'] = 'User Not Found';
-            }
+
+        try {
+            $user = auth()->user();
+            $quiz_ids = $user->result->pluck('quiz_id');
+            $quiz = Quiz::where('title', 'LIKE', "%{$quiz_name}%")->whereIn('id', $quiz_ids)->get();
+            $data = [
+                'status' => 200,
+                'message' => 'Quiz Fetch Successfuly',
+                'output' => $quiz
+            ];
+        } catch (\Throwable $th) {
+            $data = [
+                'status' => 400,
+                'message' => 'Something Went Wrong',
+                'output' => []
+            ];
         }
-        return $data;
+
+        return response()->json($data);
     }
 
     public function getPlayedQuiz($api_token)
