@@ -53,63 +53,50 @@ class QuizController extends Controller
             return response()->json($data);
         }
     }
-    public function getQuiz($subject, $api_token)
+    public function getQuiz($subject)
     {
-        if ($api_token) {
-            $user = User::where('api_token', $api_token)->first();
-            if ($user) {
 
-                try {
-                    if (count($user->quiz) > 0) {
-                        $data['data'] = $user->quiz()->withCount('question')
-                            ->get();
-                    }
-                    if ($user->usertype_id == 3) {
-                        $quiz_ids = $user->result->pluck('quiz_id');
-                        $data['data'] = Subject::find($subject)->quiz()->whereNotIn('id', $quiz_ids)->has('question', '>', 0)->withCount('question')
-                            ->get();
-                    }
-
-                    $data['status'] = '200';
-                    $data['msg'] = 'All Quizzes';
-                } catch (\Throwable $th) {
-                    $data['status'] = '500';
-                    $data['msg'] = 'Please Try Again After Some Time';
-                    $data['th'] = $th;
-                }
-            } else {
-                $data['status'] = '511';
-                $data['msg'] = 'User Not Found';
+        try {
+            $user = auth()->user();
+            if (count($user->quiz) > 0) {
+                $data['data'] = $user->quiz()->withCount('question')
+                    ->get();
             }
+            if ($user->usertype_id == 3) {
+                $quiz_ids = $user->result->pluck('quiz_id');
+                $data['data'] = Subject::find($subject)->quiz()->whereNotIn('id', $quiz_ids)->has('question', '>', 0)->withCount('question')
+                    ->get();
+            }
+
+            $data['status'] = '200';
+            $data['msg'] = 'All Quizzes';
+        } catch (\Throwable $th) {
+            $data['status'] = '500';
+            $data['msg'] = 'Please Try Again After Some Time';
+            $data['th'] = $th;
         }
+
         return response()->json($data);
     }
-    public function getSingleQuiz($quiz_id, $api_token)
+    public function getSingleQuiz($quiz_id)
     {
-        if ($api_token) {
-            $user = User::where('api_token', $api_token)->first();
-            if ($user) {
 
-                try {
+        try {
+            $user = auth()->user();
+            if ($user->usertype_id == 3) {
 
-                    if ($user->usertype_id == 3) {
-
-                        $data['data'] = Quiz::where('id', $quiz_id)->has('question', '>', 0)->withCount('question')
-                            ->get();
-                    }
-
-                    $data['status'] = '200';
-                    $data['msg'] = 'All Quizzes';
-                } catch (\Throwable $th) {
-                    $data['status'] = '500';
-                    $data['msg'] = 'Please Try Again After Some Time';
-                    $data['th'] = $th;
-                }
-            } else {
-                $data['status'] = '511';
-                $data['msg'] = 'User Not Found';
+                $data['data'] = Quiz::where('id', $quiz_id)->has('question', '>', 0)->withCount('question')
+                    ->get();
             }
+
+            $data['status'] = '200';
+            $data['msg'] = 'All Quizzes';
+        } catch (\Throwable $th) {
+            $data['status'] = '500';
+            $data['msg'] = 'Please Try Again After Some Time';
+            $data['th'] = $th;
         }
+
         return response()->json($data);
     }
     public function deleteQuiz($api_token, Quiz $quiz)

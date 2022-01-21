@@ -8,27 +8,21 @@ use Illuminate\Http\Request;
 
 class AppSubjectController extends Controller
 {
-    public function getSubjects($api_token)
+    public function getSubjects()
     {
-        if ($api_token) {
-            $user = User::where('api_token', $api_token)->first();
-            if ($user) {
-                try {
-                    if ($user->usertype_id == 3) {
-                        $data['data'] = Subject::has('quiz', '>', 0)->withCount('quiz')->get();
-                    }
 
-                    $data['status'] = '200';
-                    $data['msg'] = 'All Quizzes';
-                } catch (\Throwable $th) {
-                    $data['status'] = '500';
-                    $data['msg'] = 'Please Try Again After Some Time';
-                    $data['th'] = $th;
-                }
-            } else {
-                $data['status'] = '203';
-                $data['msg'] = 'User Not Found';
+        try {
+            $user = auth()->user();
+            if ($user->usertype_id == 3) {
+                $data['data'] = Subject::has('quiz', '>', 0)->withCount('quiz')->get();
             }
+
+            $data['status'] = '200';
+            $data['msg'] = 'All Quizzes';
+        } catch (\Throwable $th) {
+            $data['status'] = '500';
+            $data['msg'] = 'Please Try Again After Some Time';
+            $data['th'] = $th;
         }
         return response()->json($data);
     }

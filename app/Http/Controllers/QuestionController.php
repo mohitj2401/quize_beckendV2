@@ -47,26 +47,23 @@ class QuestionController extends Controller
             return response()->json($data);
         }
     }
-    public function getQuestion($api_token, Quiz $quiz)
+    public function getQuestion(Quiz $quiz)
     {
 
 
-        if ($api_token) {
 
 
-            try {
-                $data['data'] = $quiz->question;
-                $data['status'] = '200';
-                $data['msg'] = 'Question Stored Successfully';
-            } catch (\Throwable $th) {
-                $data['status'] = '500';
-                $data['msg'] = 'Please Try Again After Some Time';
-                $data['th'] = $th;
-            }
-        } else {
-            $data['status'] = '511';
+
+        try {
+            $data['data'] = $quiz->question;
+            $data['status'] = '200';
+            $data['msg'] = 'Question Stored Successfully';
+        } catch (\Throwable $th) {
+            $data['status'] = '500';
             $data['msg'] = 'Please Try Again After Some Time';
+            $data['th'] = $th;
         }
+
 
         return response()->json($data);
     }
