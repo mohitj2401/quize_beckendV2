@@ -62,7 +62,7 @@ class SubjectController extends Controller
                 alert()->success('Data Inserted Successfully');
             } catch (\Throwable $th) {
                 // dd($th);
-                alert()->error('Please check excel file', 'An Error Occur');
+                alert()->error($th->getMessage());
             }
             return redirect()->back();
         } else {
