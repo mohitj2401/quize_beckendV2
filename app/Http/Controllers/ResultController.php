@@ -54,7 +54,7 @@ class ResultController extends Controller
         return $data;
     }
 
-    public function getSearchQuiz($api_token, $quiz_name)
+    public function getSearchQuiz($quiz_name)
     {
         // $encode=json_encode($request->data1);
         // $decode=json_decode($encode);
@@ -85,15 +85,21 @@ class ResultController extends Controller
         try {
             $user = auth()->user();
             $quiz_ids = $user->result->pluck('quiz_id');
-            $data['data'] = Quiz::whereIn('id', $quiz_ids)->get();
-            $data['status'] = '200';
-            $data['msg'] = 'Result Stored Successfully';
+           
+             $data = [
+                'status' => 200,
+                'message' => 'Quiz Fetch Successfuly',
+                'output' =>  Quiz::whereIn('id', $quiz_ids)->get()
+            ];
         } catch (\Throwable $th) {
-            $data['status'] = '500';
-            $data['msg'] = $th;
+            $data = [
+                'status' => 400,
+                'message' => 'Something Went Wrong',
+                'output' => []
+            ];
         }
 
-        return $data;
+        return response()->json($data);
     }
 
     public function pdfview($quiz_id)

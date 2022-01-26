@@ -75,7 +75,7 @@ class UserController extends Controller
         return [
             'status' => 200,
             'message' => 'Login Successfully',
-            'output' => $user
+            'output' => User::where('id',$user->id)->withCount('result')->first()
         ];
     }
     public function logout(Request $request)
@@ -188,7 +188,7 @@ class UserController extends Controller
                 if (Hash::check($request->old_pass, $user->password)) {
                     $user->password = Hash::make($request->new_pass);
                     $user->save();
-                    $data['status'] = '200';
+                    $data['status'] = 200;
                     $data['message'] = 'Logged In Successfully';
                     $data['output'] = $user;
                 } else {
