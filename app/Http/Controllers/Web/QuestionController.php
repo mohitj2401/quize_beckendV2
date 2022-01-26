@@ -65,9 +65,9 @@ class QuestionController extends Controller
                 'quiz' => 'required',
             ]);
             if ($request->hasFile('excel')) {
-                $path = $request->file('excel')->getRealPath();
+                // $path = $request->file('excel')->getRealPath();
                 try {
-                    Excel::import(new ImportQuestions($request->quiz), $path);
+                    Excel::import(new ImportQuestions($request->quiz), $request->excel);
 
 
                     alert()->success('Data Inserted Successfully');

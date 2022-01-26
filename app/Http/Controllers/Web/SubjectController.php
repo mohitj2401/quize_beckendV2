@@ -57,12 +57,12 @@ class SubjectController extends Controller
         if ($request->hasFile('excel')) {
             // $path = $request->file('excel')->getRealPath();
             try {
-                Excel::import(new SubjectImport(), $request->excel);
+                Excel::import(new SubjectImport(), $request->file('excel'));
 
                 alert()->success('Data Inserted Successfully');
             } catch (\Throwable $th) {
                 // dd($th);
-                alert()->error($th->getMessage());
+                alert()->error('Please check excel file', 'An Error Occur');
             }
             return redirect()->back();
         } else {
