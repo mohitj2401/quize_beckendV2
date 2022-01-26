@@ -85,8 +85,8 @@ class ResultController extends Controller
         try {
             $user = auth()->user();
             $quiz_ids = $user->result->pluck('quiz_id');
-           
-             $data = [
+
+            $data = [
                 'status' => 200,
                 'message' => 'Quiz Fetch Successfuly',
                 'output' =>  Quiz::whereIn('id', $quiz_ids)->get()
@@ -111,6 +111,8 @@ class ResultController extends Controller
             $result = Result::where('quiz_id', $quiz_id)->where('user_id', $user->id)->first();
 
             $data['result'] = $result;
+            $data['quiz_id']
+                = $quiz_id;
             $data['result_json'] = json_decode($result->results);
 
             $pdf = PDF::loadView('admin.showresults', $data);
