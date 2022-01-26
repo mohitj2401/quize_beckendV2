@@ -38,6 +38,7 @@ class DashboardController extends Controller
         $result = Result::where('user_id', $user->id)->where('quiz_id', $quiz->id)->first();
 
         $data['result'] = $result;
+        $data['quiz_id'] = $quiz->id;
         $data['result_json'] = json_decode($result->results);
         $pdf = PDF::loadView('admin.showresults', $data);
 
