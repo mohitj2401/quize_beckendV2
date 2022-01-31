@@ -76,8 +76,10 @@
                 </td>
             </tr>
         @endfor
-        <?php $question_not = App\Models\Question::whereNotIn('id',$result->questionsid())->get(); ?>
-        
+        <?php $question_not = App\Models\Question::whereNotIn('id', $result->questionsid())
+            ->where('quiz_id', $quiz_id)
+            ->get(); ?>
+
         @foreach ($question_not as $question)
 
 
@@ -108,7 +110,7 @@
                     <p class="text-success" style="margin-left: 20px;padding:10px 0px"> <b>Not Answered</b></p>
                 </td>
             </tr>
-            <?php $i=$i+1;?>
+            <?php $i = $i + 1; ?>
         @endforeach
     </table>
 

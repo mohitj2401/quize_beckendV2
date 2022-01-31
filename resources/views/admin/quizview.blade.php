@@ -98,8 +98,7 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-3"></div>
-                            <div class="col-md-9"><img src="{{ url('storage/app/public/') . '/' . $quiz->image }}"
-                                    height="250">
+                            <div class="col-md-9"><img src="{{ url($quiz->image) }}" height="250">
                             </div>
 
                         </div>
@@ -158,6 +157,5 @@
 
             });
         }
-
     </script>
 @endsection

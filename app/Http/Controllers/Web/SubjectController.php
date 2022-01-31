@@ -55,9 +55,9 @@ class SubjectController extends Controller
     public function store(Request $request)
     {
         if ($request->hasFile('excel')) {
-            $path = $request->file('excel')->getRealPath();
+            // $path = $request->file('excel')->getRealPath();
             try {
-                Excel::import(new SubjectImport(), $path);
+                Excel::import(new SubjectImport(), $request->file('excel'));
 
                 alert()->success('Data Inserted Successfully');
             } catch (\Throwable $th) {

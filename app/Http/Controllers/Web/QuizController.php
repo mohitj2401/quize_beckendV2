@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\Subject;
+use Facade\FlareClient\Stacktrace\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File as FacadesFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -67,12 +69,12 @@ class QuizController extends Controller
         $quiz->subject_id = $request->subject;
         $quiz->start_time = $request->start_date;
         $quiz->end_time = $request->end_date;
-        $imageName = time() . '.' . $request->image->extension();
+        $imageName = Str::slug($quiz->title) . time() . '.' . $request->image->extension();
 
-        Storage::putFileAs('public\quiz', $request->image, $imageName);
+        $request->image->move(public_path('uploads/quiz'), $imageName);
 
         // $quiz->image = Storage::url('quiz\\' . $imageName);
-        $quiz->image = 'quiz/' . $imageName;
+        $quiz->image = 'uploads/quiz/' . $imageName;
         auth()->user()->quiz()->save($quiz);
         alert()->success('Quiz Created Succesfully');
         return back();
@@ -120,16 +122,18 @@ class QuizController extends Controller
         // $path = Storage::exists($path);
         // dd(Storage::exists('public/' . $quiz->image));
         if ($request->image) {
-            if (Storage::exists('public/' . $quiz->image)) {
+            // dd(public_path() . $quiz->image);
 
-                Storage::delete('public/' . $quiz->image);
+            if (FacadesFile::exists(public_path('/') . '/' . $quiz->image)) {
+
+                FacadesFile::delete(public_path('/') . '/' . $quiz->image);
             }
-            $imageName = time() . '.' . $request->image->extension();
+            $imageName = Str::slug($quiz->title) . time() . '.' . $request->image->extension();
 
-            Storage::putFileAs('public\quiz', $request->image, $imageName);
+            $request->image->move(public_path('uploads/quiz'), $imageName);
 
             // $quiz->image = Storage::url('quiz\\' . $imageName);
-            $quiz->image = 'quiz/' . $imageName;
+            $quiz->image = 'uploads/quiz/' . $imageName;
         }
 
 
@@ -152,9 +156,9 @@ class QuizController extends Controller
      */
     public function destroy(Quiz $quiz)
     {
-        if (Storage::exists('public/' . $quiz->image)) {
+        if (FacadesFile::exists(public_path('/') . '/' . $quiz->image)) {
 
-            Storage::delete('public/' . $quiz->image);
+            FacadesFile::delete(public_path('/') . '/' . $quiz->image);
         }
         $quiz->delete();
         alert()->success('Quiz Deleted Succesfully');

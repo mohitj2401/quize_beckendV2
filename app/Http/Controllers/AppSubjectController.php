@@ -21,11 +21,11 @@ class AppSubjectController extends Controller
                 'message' => 'Subject Fetch Successfuly',
                 'output' => $subject
             ];
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             $data = [
                 'status' => 400,
                 'message' => 'Something Went Worng',
-                'output' => []
+                'output' => $th
             ];
         }
         return response()->json($data);
@@ -43,10 +43,10 @@ class AppSubjectController extends Controller
                 'message' => 'Subject Fetch Successfuly',
                 'output' => $subject
             ];
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             $data = [
                 'status' => 400,
-                'message' => 'Something Went Wrong' . $th,
+                'message' => 'Something Went Wrong',
                 'output' => []
             ];
         }

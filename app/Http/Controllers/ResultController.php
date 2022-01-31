@@ -12,54 +12,49 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class ResultController extends Controller
 {
-    public function store(Request $request, $api_token)
+    public function store(Request $request)
     {
         // $encode=json_encode($request->data1);
         // $decode=json_decode($encode);
         $data = array();
-        if ($api_token) {
-            $user = User::where('api_token', $api_token)->first();
-            if ($user) {
-                try {
-                    $result = new Result;
 
-                    $result->results = $request['data1'];
-                    $res = json_decode($request['data1']);
-                    $total = count(Quiz::find($request['quizId'])->question);
-                    $notAttempted = $total - count($res);
-                    $correct = 0;
-                    $incorrect = 0;
-                    foreach ($res as $key) {
+        try {
+            $user = auth()->user();
+            $result = new Result();
 
-                        if (Question::where('id', $key->id)->where('option1', $key->answer)->first()) {
-                            $correct++;
-                        } else {
-                            $incorrect++;
-                        }
-                    }
+            $result->results = $request['data1'];
+            $res = json_decode($request['data1']);
+            $total = count(Quiz::find($request['quizId'])->question);
+            $notAttempted = $total - count($res);
+            $correct = 0;
+            $incorrect = 0;
+            foreach ($res as $key) {
 
-                    $result->user_id = $user->id;
-                    $result->notAttempted = $notAttempted;
-                    $result->total = $total;
-                    $result->incorrect = $incorrect;
-                    $result->correct = $correct;
-                    $result->quiz_id = $request['quizId'];
-                    $result->save();
-                    $data['status'] = '200';
-                    $data['msg'] = 'Result Stored Successfully';
-                } catch (\Throwable $th) {
-                    $data['status'] = '500';
-                    $data['msg'] = $th;
+                if (Question::where('id', $key->id)->where('option1', $key->answer)->first()) {
+                    $correct++;
+                } else {
+                    $incorrect++;
                 }
-            } else {
-                $data['status'] = '511';
-                $data['msg'] = 'User Not Found';
             }
+
+            $result->user_id = $user->id;
+            $result->notAttempted = $notAttempted;
+            $result->total = $total;
+            $result->incorrect = $incorrect;
+            $result->correct = $correct;
+            $result->quiz_id = $request['quizId'];
+            $result->save();
+            $data['status'] = '200';
+            $data['msg'] = 'Result Stored Successfully';
+        } catch (\Throwable $th) {
+            $data['status'] = '500';
+            $data['msg'] = $th;
         }
+
         return $data;
     }
 
-    public function getSearchQuiz($api_token, $quiz_name)
+    public function getSearchQuiz($quiz_name)
     {
         // $encode=json_encode($request->data1);
         // $decode=json_decode($encode);
@@ -84,53 +79,48 @@ class ResultController extends Controller
         return response()->json($data);
     }
 
-    public function getPlayedQuiz($api_token)
+    public function getPlayedQuiz()
     {
-        $data = array();
-        if ($api_token) {
-            $user = User::where('api_token', $api_token)->first();
-            if ($user) {
-                try {
-                    $quiz_ids = $user->result->pluck('quiz_id');
-                    $data['data'] = Quiz::whereIn('id', $quiz_ids)->get();
-                    $data['status'] = '200';
-                    $data['msg'] = 'Result Stored Successfully';
-                } catch (\Throwable $th) {
-                    $data['status'] = '500';
-                    $data['msg'] = $th;
-                }
-            } else {
-                $data['status'] = '511';
-                $data['msg'] = 'User Not Found';
-            }
+
+        try {
+            $user = auth()->user();
+            $quiz_ids = $user->result->pluck('quiz_id');
+
+            $data = [
+                'status' => 200,
+                'message' => 'Quiz Fetch Successfuly',
+                'output' =>  Quiz::whereIn('id', $quiz_ids)->get()
+            ];
+        } catch (\Throwable $th) {
+            $data = [
+                'status' => 400,
+                'message' => 'Something Went Wrong',
+                'output' => []
+            ];
         }
-        return $data;
+
+        return response()->json($data);
     }
 
-    public function pdfview($api_token, $quiz_id)
+    public function pdfview($quiz_id)
     {
-        $data = array();
-        if ($api_token) {
-            $user = User::where('api_token', $api_token)->first();
-            if ($user) {
 
-                try {
-                    $result = Result::where('quiz_id', $quiz_id)->where('user_id', $user->id)->first();
 
-                    $data['result'] = $result;
-                    $data['result_json'] = json_decode($result->results);
+        try {
+            $user = auth()->user();
+            $result = Result::where('quiz_id', $quiz_id)->where('user_id', $user->id)->first();
 
-                    $pdf = PDF::loadView('admin.showresults', $data);
+            $data['result'] = $result;
+            $data['quiz_id']
+                = $quiz_id;
+            $data['result_json'] = json_decode($result->results);
 
-                    return $pdf->download('result.pdf');
-                } catch (\Throwable $th) {
-                    $data['status'] = '500';
-                    $data['msg'] = $th;
-                }
-            } else {
-                $data['status'] = '511';
-                $data['msg'] = 'User Not Found';
-            }
+            $pdf = PDF::loadView('admin.showresults', $data);
+
+            return $pdf->download('result.pdf');
+        } catch (\Throwable $th) {
+            $data['status'] = '500';
+            $data['msg'] = $th;
         }
 
         return $data;
