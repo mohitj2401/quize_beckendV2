@@ -39,7 +39,7 @@ class QuizController extends Controller
     {
         $data['active'] = 'quiz';
         $data['title'] = 'Create Quiz | Quizie';
-        $data['subjects'] = auth()->user()->subjects->where('status', 1);
+        $data['subjects'] = Subject::where('status', 1)->get();
         return view('admin.quizcreate', $data);
     }
 
@@ -99,7 +99,7 @@ class QuizController extends Controller
         $data['quiz'] = $quiz;
         $data['active'] = 'quiz';
         $data['title'] = 'Edit Quiz | Quizie';
-        $data['subjects'] = auth()->user()->subjects;
+        $data['subjects'] = Subject::where('status', 1)->get();
         return view('admin.quizview', $data);
     }
 
@@ -137,7 +137,7 @@ class QuizController extends Controller
         $quiz->title = $request->title;
         $quiz->subject_id = $request->subject;
         $quiz->duration = $request->duration;
-$quiz->start_time = $request->start_date;
+        $quiz->start_time = $request->start_date;
         $quiz->end_time = $request->end_date;
         $quiz->save();
         alert()->success('Quiz Updated Succesfully');
