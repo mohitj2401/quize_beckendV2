@@ -18,6 +18,9 @@ class UserController extends Controller
      */
     public function index()
     {
+        if (auth()->user()->usertype_id != 1) {
+            return   redirect()->back();
+        }
         $data['title'] = 'User List | Quizie';
         $data['active'] = 'user';
         if (auth()->user()->usertype_id == 1) {
