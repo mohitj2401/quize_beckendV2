@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\ResultController;
 use App\Http\Controllers\Web\SubjectController;
 use App\Models\Result;
@@ -22,7 +23,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 
 Auth::routes();
-Route::get('/', [App\Http\Controllers\Web\DashboardController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\Web\DashboardController::class, 'index'])->name('home');
 //Quiz
 Route::get('/create/quiz', [App\Http\Controllers\Web\QuizController::class, 'create'])->name('create.quiz');
 Route::get('/quizzes', [App\Http\Controllers\Web\QuizController::class, 'index'])->name('quiz.view');
@@ -71,3 +72,7 @@ Route::get('/download/result/{user}/{quiz}', [App\Http\Controllers\Web\Dashboard
 
 //Results
 Route::get('/result/{quiz}/users', [App\Http\Controllers\Web\ResultController::class, 'index'])->name('quiz.results');
+
+Route::get('/', [HomeController::class, 'index']);
+Route::get('privacy-policy', [HomeController::class, 'privacy']);
+Route::get('terms', [HomeController::class, 'terms']);
