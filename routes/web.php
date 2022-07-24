@@ -74,5 +74,5 @@ Route::get('/download/result/{user}/{quiz}', [App\Http\Controllers\Web\Dashboard
 Route::get('/result/{quiz}/users', [App\Http\Controllers\Web\ResultController::class, 'index'])->name('quiz.results');
 
 Route::get('/', [HomeController::class, 'index']);
-Route::get('privacy-policy', [HomeController::class, 'privacy']);
-Route::get('terms', [HomeController::class, 'terms']);
+Route::get('privacy-policy', [HomeController::class, 'privacy'])->name('privacy');
+Route::get('terms', [HomeController::class, 'terms'])->name('terms');
