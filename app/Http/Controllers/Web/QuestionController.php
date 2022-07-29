@@ -10,6 +10,7 @@ use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
 
 class QuestionController extends Controller
 {
@@ -71,7 +72,9 @@ class QuestionController extends Controller
 
 
                     alert()->success('Data Inserted Successfully');
-                } catch (\Throwable $th) {
+                } catch (\Exception $e) {
+                    Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+
                     alert()->error('Please check excel file', 'An Error Occur');
                 }
             }

@@ -7,6 +7,7 @@ use App\Imports\SubjectImport;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
 
 class SubjectController extends Controller
 {
@@ -26,7 +27,7 @@ class SubjectController extends Controller
         $data['title'] = 'Subject List | Quizie';
         $data['active'] = 'subject';
         // if (auth()->user()->usertype_id == 1) {
-            $data['subjects'] = Subject::all();
+        $data['subjects'] = Subject::all();
         // } else {
         //     $data['subjects'] = Subject::where('user_id', auth()->user()->id)->get();
         // }
@@ -60,8 +61,9 @@ class SubjectController extends Controller
                 Excel::import(new SubjectImport(), $request->file('excel'));
 
                 alert()->success('Data Inserted Successfully');
-            } catch (\Throwable $th) {
-                // dd($th);
+            } catch (\Exception $e) {
+                Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+
                 alert()->error('Please check excel file', 'An Error Occur');
             }
             return redirect()->back();
