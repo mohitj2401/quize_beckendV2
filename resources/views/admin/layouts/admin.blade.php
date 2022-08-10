@@ -141,8 +141,7 @@
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="{{ asset('assets/assets/demo/datatables-demo.js') }}"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
-
+    <script src="https://cdn.ckeditor.com/4.19.1/standard/ckeditor.js"></script>
     @include('sweet::alert')
     @yield('scripts')
 
