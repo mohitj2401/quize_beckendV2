@@ -13,8 +13,8 @@
                             <label class="col-md-3 col-form-label ">{{ __('Question') }}</label>
 
                             <div class="col-md-8">
-                                <input type="text" class="form-control @error('question') is-invalid @enderror"
-                                    name="question" value="{{ old('question') }}" required autofocus>
+                                <textarea class="form-control @error('question') is-invalid @enderror" id="editor" name="question" required
+                                    autofocus>{{ old('question') }}</textarea>
 
                                 @error('question')
                                     <span class="invalid-feedback" role="alert">
@@ -94,5 +94,13 @@
             </div>
         </div>
     </main>
-
+@endsection
+@section('scripts')
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
 @endsection

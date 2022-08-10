@@ -12,8 +12,7 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet"
         crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous">
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
     @yield('style')
 </head>
 
@@ -35,13 +34,15 @@
         <!-- Navbar-->
         <ul class="navbar-nav ml-auto ml-md-0">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
+                        class="fas fa-user fa-fw"></i></a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                     <a class="dropdown-item" href="{{ route('user.profile') }}">Settings</a>
 
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                    <a class="dropdown-item" href="{{ route('logout') }}"
+                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                         {{ __('Logout') }}
                     </a>
@@ -63,9 +64,9 @@
                             Dashboard
                         </a>
 
-                        <a class="nav-link collapsed @if ($active == 'subject') active @endif" data-toggle="collapse"
-                            data-target="#collapseSubjects" aria-expanded="false" href="#collapseSubjects"
-                            aria-controls="collapseSubjects">
+                        <a class="nav-link collapsed @if ($active == 'subject') active @endif"
+                            data-toggle="collapse" data-target="#collapseSubjects" aria-expanded="false"
+                            href="#collapseSubjects" aria-controls="collapseSubjects">
                             <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                             Subject
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -78,9 +79,9 @@
                             </nav>
                         </div>
 
-                        <a class="nav-link collapsed @if ($active == 'quiz') active @endif" data-toggle="collapse"
-                            data-target="#collapseQuizs" aria-expanded="false" aria-controls="collapseQuizs"
-                            href="#collapseQuizs">
+                        <a class="nav-link collapsed @if ($active == 'quiz') active @endif"
+                            data-toggle="collapse" data-target="#collapseQuizs" aria-expanded="false"
+                            aria-controls="collapseQuizs" href="#collapseQuizs">
                             <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                             Quiz
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -94,9 +95,9 @@
                             </nav>
                         </div>
                         @if (auth()->user()->usertype_id == 1)
-                            <a class="nav-link collapsed @if ($active == 'user') active @endif" data-toggle="collapse"
-                                data-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers"
-                                href="#collapseUsers">
+                            <a class="nav-link collapsed @if ($active == 'user') active @endif"
+                                data-toggle="collapse" data-target="#collapseUsers" aria-expanded="false"
+                                aria-controls="collapseUsers" href="#collapseUsers">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                                 User
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -140,6 +141,8 @@
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script src="{{ asset('assets/assets/demo/datatables-demo.js') }}"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
+
     @include('sweet::alert')
     @yield('scripts')
 
