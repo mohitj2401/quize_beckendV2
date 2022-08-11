@@ -49,7 +49,7 @@
             <?php $question = App\Models\Question::find($result_json[$i]->id); ?>
             <tr>
                 <td colspan="4">
-                    <p style="margin-top: 25px;font-size:20px">Q{{ $i + 1 . '  ) ' . $question->title }}</p>
+                    <p style="margin-top: 25px;font-size:20px">Q{!! $i + 1 . '  ) ' . $question->title !!}</p>
                 </td>
 
             </tr>
