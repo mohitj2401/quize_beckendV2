@@ -21,7 +21,7 @@ class QuestionController extends Controller
             $data = [
                 'status' => 200,
                 'message' => 'Subject Fetch Successfuly',
-                'output' => $quiz->question
+                'output' => $quiz->question()->paginate(1)
             ];
         } catch (\Throwable $th) {
             $data = [
