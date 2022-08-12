@@ -28,4 +28,8 @@ class Quiz extends Model
     {
         return $this->belongsTo(Subject::class);
     }
+    public function getDurationAttribute($value)
+    {
+        return (int)$value;
+    }
 }
