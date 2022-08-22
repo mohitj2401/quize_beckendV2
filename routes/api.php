@@ -20,7 +20,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/register', [UserController::class, 'register']);
-
+Route::post('send-otp', [UserController::class, 'sendOTP']);
+Route::post('send-otp-password', [UserController::class, 'sendOTPPasswordReset']);
+Route::post('verifyotp', [UserController::class, 'verify']);
 Route::post('/login', [UserController::class, 'login']);
 // Route::post('/quiz/create/{api_token}', [QuizController::class, 'store']);
 // Route::get('/quiz/get/{quiz_id}/{api_token}', [QuizController::class, 'getSingleQuiz']);
@@ -46,4 +48,5 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/result/store', [ResultController::class, 'store']);
     Route::get('/result/getquiz', [ResultController::class, 'getPlayedQuiz']);
     Route::get('/download/result/{quiz_id}', [ResultController::class, 'pdfview']);
+    Route::post('/feedback', [UserController::class, 'feedback']);
 });
