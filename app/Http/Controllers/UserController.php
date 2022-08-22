@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Swift_TransportException;
 
 class UserController extends Controller
 {
@@ -249,6 +250,8 @@ class UserController extends Controller
                     'message' => 'OTP has been sent to your email account',
                     'output'  => []
                 ];
+            } catch (Swift_TransportException $e) {
+                return $e->getMessage();
             } catch (\Exception $e) {
                 Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
 
