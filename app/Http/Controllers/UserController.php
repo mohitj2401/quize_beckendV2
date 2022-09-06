@@ -29,7 +29,7 @@ class UserController extends Controller
         } else {
             $user_details = request()->only([
                 'name', 'email',
-
+                'isverify'
             ]);
 
 
@@ -170,6 +170,7 @@ class UserController extends Controller
 
         try {
             $user->name = $request->name;
+            $user->isverify = $request->isverify;
             // $user->email = $request->email;
             $user->save();
             $data = [
