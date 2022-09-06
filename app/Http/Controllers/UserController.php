@@ -218,10 +218,9 @@ class UserController extends Controller
 
     public function sendOTP(Request $request)
     {
+
         $validate = Validator($request->all(), [
             'email' => 'required|unique:users,email|email',
-
-
         ]);
         if ($validate->fails()) {
             return response()->json($validate->errors());
