@@ -22,7 +22,7 @@
 </head>
 
 <body>
-    <div id="app" style="min-height: 89vh">
+    <div id="app" style="min-height: 95vh">
         <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
@@ -46,13 +46,15 @@
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                    <a class="nav-link {{ Route::currentRouteName() == 'login' ? 'active' : '' }}"
+                                        href="{{ route('login') }}">{{ __('Login') }}</a>
                                 </li>
                             @endif
 
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="nav-link {{ Route::currentRouteName() == 'register' ? 'active' : '' }}"
+                                        href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -80,7 +82,7 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="py-4 ">
             @yield('content')
         </main>
     </div>
