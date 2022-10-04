@@ -76,3 +76,4 @@ Route::get('/result/{quiz}/users', [App\Http\Controllers\Web\ResultController::c
 Route::get('/', [HomeController::class, 'index']);
 Route::get('privacy-policy', [HomeController::class, 'privacy'])->name('privacy');
 Route::get('terms', [HomeController::class, 'terms'])->name('terms');
+Route::post('contact', [HomeController::class, 'contact'])->name('contact');

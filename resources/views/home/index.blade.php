@@ -38,14 +38,15 @@
                             class="" target="_blank">noonedev.com</a></span></p>
             </div>
             <div class="col-md-8">
-                <form action="">
+                <form action="{{ route('contact') }}" method="POST">
+                    @csrf
                     <div class="row">
                         <div class="col-md-6">
 
 
                             <div class="form-floating mb-3">
                                 <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
-                                    required>
+                                    name="email" required>
                                 <label for="floatingInput">Email address *</label>
                             </div>
 
@@ -54,28 +55,30 @@
 
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control" id="floatingInput" placeholder="Your Name"
-                                    required>
+                                    name="name" required>
                                 <label for="floatingInput">Name *</label>
                             </div>
                         </div>
                         <div class="col-md-6">
 
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="floatingInput" placeholder="Subject">
+                                <input type="text" class="form-control" id="floatingInput" placeholder="Subject"
+                                    name="subject">
                                 <label for="floatingInput">Subject </label>
                             </div>
                         </div>
                         <div class="col-md-6">
 
                             <div class="form-floating mb-3">
-                                <input type="number" class="form-control" id="floatingInput" placeholder="Phone Number">
+                                <input type="number" class="form-control" id="floatingInput" placeholder="Phone Number"
+                                    name="mobile">
                                 <label for="floatingInput">Phone</label>
                             </div>
                         </div>
                         <div class="col-md-12">
 
                             <div class="form-floating mb-3">
-                                <textarea class="form-control" id="floatingInput" placeholder="Message"style="height: 100px"></textarea>
+                                <textarea class="form-control" id="floatingInput" placeholder="Message"style="height: 100px" name="number"></textarea>
                                 <label for="floatingInput">Message </label>
                             </div>
                         </div>
