@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Web\Role\RoleController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\Permission\PermissionController;
 use App\Http\Controllers\Web\ResultController;
 use App\Http\Controllers\Web\SubjectController;
 use App\Models\Result;
@@ -77,3 +79,12 @@ Route::get('/', [HomeController::class, 'index']);
 Route::get('privacy-policy', [HomeController::class, 'privacy'])->name('privacy');
 Route::get('terms', [HomeController::class, 'terms'])->name('terms');
 Route::post('contact', [HomeController::class, 'contact'])->name('contact');
+
+
+//V2 Routes
+Route::group(['middleware' => 'auth'], function () {
+    Route::resource('roles', RoleController::class);
+    Route::get('add-permission\{role}', [RoleController::class, 'getPermission']);
+    Route::post('add-permission\{role}', [RoleController::class, 'storePermission']);
+    Route::resource('permissions', PermissionController::class);
+});
