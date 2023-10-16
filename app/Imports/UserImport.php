@@ -38,13 +38,15 @@ class UserImport implements ToModel, WithHeadingRow, WithValidation
         // dd(Carbon::parse($row['pass']));
         // dd(!Question::where('title', $row['title'])->where('quiz_id', 22)->count() > 0);
         if (!User::where('email', $row['email'])->count() > 0) {
-            return new User([
+            $user = new  User([
                 'name' => $row['name'],
                 'password' => Hash::make(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['dob'])->format('d/m/Y')),
                 'email' => $row['email'],
                 'usertype_id' => $user_type_id,
                 'api_token' => time() . Str::random(30),
             ]);
+            $user->assignRole('Teacher');
+            return $user;
         }
     }
 }

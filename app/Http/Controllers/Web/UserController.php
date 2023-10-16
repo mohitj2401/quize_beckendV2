@@ -18,8 +18,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        if (auth()->user()->usertype_id != 1) {
-            return   redirect()->back();
+        if (!(auth()->user()->can('Create User') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
         }
         $data['title'] = 'User List | Quizie';
         $data['active'] = 'user';
@@ -49,6 +51,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        if (!(auth()->user()->can('Create User') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         if ($request->hasFile('excel')) {;
             try {
                 Excel::import(new UserImport(), $request->file('excel'));
@@ -107,6 +114,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        if (!(auth()->user()->can('Create User') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         if (auth()->user()->usertype_id == 1) {
             $user->deleted = 1;
             $user->save();

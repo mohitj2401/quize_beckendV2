@@ -29,6 +29,7 @@ class PermissionController extends Controller
     {
 
         $this->permission = $permission;
+        $this->middleware('can:Crud Permission');
     }
 
     public function index()

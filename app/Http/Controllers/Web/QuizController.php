@@ -26,6 +26,11 @@ class QuizController extends Controller
      */
     public function index()
     {
+        if (!(auth()->user()->can('Create Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         $data['active'] = 'quiz';
         $data['title'] = 'Quiz List | Quizie';
         $data['quizzes'] = auth()->user()->quiz;
@@ -39,6 +44,11 @@ class QuizController extends Controller
      */
     public function create()
     {
+        if (!(auth()->user()->can('Create Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         $data['active'] = 'quiz';
         $data['title'] = 'Create Quiz | Quizie';
         $data['subjects'] = Subject::where('status', 1)->get();
@@ -53,7 +63,11 @@ class QuizController extends Controller
      */
     public function store(Request $request)
     {
+        if (!(auth()->user()->can('Create Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
 
+            return redirect()->back();
+        }
         // dd($request->all());
         $request->validate([
             'title' => 'required|max:255',
@@ -98,6 +112,11 @@ class QuizController extends Controller
      */
     public function edit(Quiz $quiz)
     {
+        if (!(auth()->user()->can('Create Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         $data['quiz'] = $quiz;
         $data['active'] = 'quiz';
         $data['title'] = 'Edit Quiz | Quizie';
@@ -114,6 +133,11 @@ class QuizController extends Controller
      */
     public function update(Request $request, Quiz $quiz)
     {
+        if (!(auth()->user()->can('Create Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         $request->validate([
             'title' => 'required|max:255',
             'description' => 'required|max:255',
@@ -156,6 +180,11 @@ class QuizController extends Controller
      */
     public function destroy(Quiz $quiz)
     {
+        if (!(auth()->user()->can('Create Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         if (FacadesFile::exists(public_path('/') . '/' . $quiz->image)) {
 
             FacadesFile::delete(public_path('/') . '/' . $quiz->image);

@@ -24,14 +24,16 @@ class SubjectController extends Controller
 
     public function index()
     {
+        if (!(auth()->user()->can('View Subject') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         $data['title'] = 'Subject List | Quizie';
         $data['active'] = 'subject';
-        // if (auth()->user()->usertype_id == 1) {
+
         $data['subjects'] = Subject::all();
-        // } else {
-        //     $data['subjects'] = Subject::where('user_id', auth()->user()->id)->get();
-        // }
-        // $data['subjects'] = Subject::all();
+
         return view('subject.list', $data);
     }
 
@@ -42,6 +44,11 @@ class SubjectController extends Controller
      */
     public function create()
     {
+        if (!(auth()->user()->can('Create Subject') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         $data['title'] = 'Subject Create | Quizie';
         $data['active'] = 'subject';
         return view('subject.create', $data);
@@ -55,6 +62,11 @@ class SubjectController extends Controller
      */
     public function store(Request $request)
     {
+        if (!(auth()->user()->can('Create Subject') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         if ($request->hasFile('excel')) {
             // $path = $request->file('excel')->getRealPath();
             try {
@@ -91,6 +103,11 @@ class SubjectController extends Controller
      */
     public function show(Subject $subject)
     {
+        if (!(auth()->user()->can('Edit Subject') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         $data['title'] = 'Subject Edit | Quizie';
         $data['active'] = 'subject';
         $data['subject'] = $subject;
@@ -117,6 +134,11 @@ class SubjectController extends Controller
      */
     public function update(Request $request, Subject $subject)
     {
+        if (!(auth()->user()->can('Edit Subject') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         $request->validate([
             'name' => 'required|bail|max:255|unique:subjects,name,' . $subject->id,
             'code' => 'required|bail|max:255|unique:subjects,code,' . $subject->id,
@@ -136,6 +158,11 @@ class SubjectController extends Controller
      */
     public function destroy(Subject $subject)
     {
+        if (!(auth()->user()->can('Delete Subject') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+
+            return redirect()->back();
+        }
         if ($subject->user->id != auth()->user()->id) {
             alert()->error("Don't have enough privileges for performing this action");
         }
