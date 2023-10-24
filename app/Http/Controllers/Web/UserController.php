@@ -114,20 +114,17 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if (!(auth()->user()->can('Create User') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+        if (!(auth()->user()->can('Delete User') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
             alert()->error("You Don't Have Enough Permission", 'Request Denied');
 
             return redirect()->back();
         }
-        if (auth()->user()->usertype_id == 1) {
-            $user->deleted = 1;
-            $user->save();
-        } else {
-            alert()->warning('Not Allowed');
-            return redirect()->back();
-        }
 
-        alert()->success('User deleted successfuly');
+        $user->deleted = $user->deleted == 1 ? 0 : 1;
+        $user->save();
+
+
+        alert()->success('User status changed');
         return redirect()->back();
     }
 

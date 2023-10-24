@@ -13,11 +13,9 @@
            .toggle-on.btn {
                padding-right: 0px !important;
            }
-
        </style>
    @endsection
    @section('content')
-
        <main>
            <div class="container-fluid mt-5">
 
@@ -55,12 +53,12 @@
                                            <td>{{ $user->name }}</td>
                                            <td>{{ $user->email }}</td>
                                            <td> <input type="checkbox" class="userStatus" rel="{{ $user->id }}"
-                                                   data-toggle="toggle" data-onstyle="success" data-offstyle="danger" @if ($user->status == 1) checked @endif>
+                                                   data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
+                                                   @if ($user->deleted != 1) checked @endif>
                                            </td>
 
                                            <td>{{ $user->created_at }}</td>
                                            @if (auth()->user()->usertype_id == 1)
-
                                                <td>
 
                                                    <div class="dropdown">
@@ -71,7 +69,7 @@
 
                                                            <a class="dropdown-item"
                                                                href="{{ route('user.delete', $user->id) }}"><i
-                                                                   class="fas fa-trash"></i>Delete</a>
+                                                                   class="fas fa-trash"></i>{{ $user->deleted == 0 ? 'Delete' : 'Undelete' }}</a>
                                                        </div>
                                                    </div>
 
@@ -89,14 +87,21 @@
        </main>
    @endsection
    @if (auth()->user()->usertype_id == 1)
-       @include('commons.modal',array('from_title'=>'Teacher
-       Create','route'=>'/user/create','file_name'=>'user_sample'))
+       @include('commons.modal', [
+           'from_title' => 'Teacher
+                                   Create',
+           'route' => '/user/create',
+           'file_name' => 'user_sample',
+       ])
    @else
-       @include('commons.modal',array('from_title'=>'Student
-       Create','route'=>'/user/create','file_name'=>'user_sample'))
+       @include('commons.modal', [
+           'from_title' => 'Student
+                                   Create',
+           'route' => '/user/create',
+           'file_name' => 'user_sample',
+       ])
    @endif
    @section('scripts')
-
        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-toggle/2.2.2/js/bootstrap2-toggle.js"></script>
 
        <script>
