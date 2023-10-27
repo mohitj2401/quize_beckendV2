@@ -75,7 +75,7 @@ class RegisterController extends Controller
         $api_token = time() . Str::random(30);
         $user->api_token = $api_token;
         $user->save();
-
+        $user->assignRole('Teacher');
         return $user;
     }
 }

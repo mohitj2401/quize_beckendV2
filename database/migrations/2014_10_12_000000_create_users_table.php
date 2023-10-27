@@ -28,14 +28,6 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
-
-        DB::table('users')->insert([
-            'name' => 'Owner',
-            'usertype_id' => 1,
-            'api_token' => time() . Str::random(30),
-            'email' => 'owner@gmail.com',
-            'password' => Hash::make('password@123')
-        ]);
     }
 
     /**

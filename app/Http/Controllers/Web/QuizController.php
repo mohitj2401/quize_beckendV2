@@ -26,7 +26,7 @@ class QuizController extends Controller
      */
     public function index()
     {
-        if (!(auth()->user()->can('Create Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+        if (!(auth()->user()->can('view Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
             alert()->error("You Don't Have Enough Permission", 'Request Denied');
 
             return redirect()->back();
