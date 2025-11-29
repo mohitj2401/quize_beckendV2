@@ -128,7 +128,7 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
-    @include('sweet::alert')
+    @include('sweetalert::alert')
 </body>
 
 </html>

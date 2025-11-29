@@ -30,4 +30,17 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+    ],
+
+    'ollama' => [
+        'url' => env('OLLAMA_URL', 'http://localhost:11434'),
+        'model' => env('OLLAMA_MODEL', 'llama3.1:8b'),
+    ],
+
+    'gemini' => [
+        'api_key' => env('GEMINI_API_KEY'),
+    ],
+
 ];
