@@ -42,14 +42,14 @@
                         </div>
 
                         <hr class="my-4">
-                        
+
                         <div class="form-group row">
                             <div class="col-md-8 offset-md-3">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="generate_with_ai" 
+                                    <input type="checkbox" class="custom-control-input" id="generate_with_ai"
                                            name="generate_with_ai" value="1" {{ old('generate_with_ai') ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="generate_with_ai">
-                                        <i class="fas fa-robot text-primary"></i> 
+                                        <i class="fas fa-robot text-primary"></i>
                                         <strong>Generate Quiz & Questions with AI</strong>
                                     </label>
                                     <small class="form-text text-muted">
@@ -63,8 +63,8 @@
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label">{{ __('Number of Questions') }}</label>
                                 <div class="col-md-8">
-                                    <input type="number" class="form-control" name="ai_question_count" 
-                                           value="{{ old('ai_question_count', 10) }}" min="5" max="50">
+                                    <input type="number" class="form-control" name="number_of_questions"
+                                           value="{{ old('number_of_questions', 10) }}" min="5" max="50">
                                     <small class="form-text text-muted">Between 5 and 50 questions</small>
                                 </div>
                             </div>
@@ -72,10 +72,10 @@
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label">{{ __('Difficulty Level') }}</label>
                                 <div class="col-md-8">
-                                    <select class="form-control" name="ai_difficulty">
-                                        <option value="easy" {{ old('ai_difficulty') == 'easy' ? 'selected' : '' }}>Easy</option>
-                                        <option value="medium" {{ old('ai_difficulty', 'medium') == 'medium' ? 'selected' : '' }}>Medium</option>
-                                        <option value="hard" {{ old('ai_difficulty') == 'hard' ? 'selected' : '' }}>Hard</option>
+                                    <select class="form-control" name="difficulty">
+                                        <option value="easy" {{ old('difficulty') == 'easy' ? 'selected' : '' }}>Easy</option>
+                                        <option value="medium" {{ old('difficulty', 'medium') == 'medium' ? 'selected' : '' }}>Medium</option>
+                                        <option value="hard" {{ old('difficulty') == 'hard' ? 'selected' : '' }}>Hard</option>
                                     </select>
                                 </div>
                             </div>
@@ -83,13 +83,13 @@
                             <div class="form-group row">
                                 <label class="col-md-3 col-form-label">{{ __('Quiz Duration (minutes)') }}</label>
                                 <div class="col-md-8">
-                                    <input type="number" class="form-control" name="ai_duration" 
-                                           value="{{ old('ai_duration', 30) }}" min="5">
+                                    <input type="number" class="form-control" name="duration"
+                                           value="{{ old('duration', 30) }}" min="5">
                                 </div>
                             </div>
 
                             <div class="alert alert-info col-md-8 offset-md-3">
-                                <i class="fas fa-info-circle"></i> 
+                                <i class="fas fa-info-circle"></i>
                                 AI will generate questions based on the subject name. Make sure the subject name is descriptive!
                             </div>
                         </div>

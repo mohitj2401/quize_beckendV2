@@ -138,6 +138,52 @@ php artisan serve
 
 ## Usage
 
+### Queued AI Generation & Job Batching
+
+- Quiz and question generation now run as background jobs so AI work does not block web requests. Two jobs are used:
+  - `GenerateAiQuizJob` — creates the quiz record and metadata, uploads image path and enqueues question generation.
+  - `CreateQuizQuestionsJob` — generates questions for a quiz and saves them.
+
+- Question generation is batched: each `CreateQuizQuestionsJob` will generate up to `questions_batch` questions (default 5) and re-dispatch itself for remaining questions until the requested number is reached. This batch size is configurable (see Config below).
+
+### Routes (web)
+
+- POST `/generate/quiz/ai` — generate entire quiz (quiz + questions) using AI (queued) (named `generate.quiz.ai`).
+- POST `/generate/questions/{quiz}/ai` — generate questions for an existing quiz using AI (queued) (named `generate.question.ai`).
+- GET `/system/batch-jobs` — UI to monitor queued and failed jobs (named `system.batch-jobs.index`).
+- POST `/system/batch-jobs/{id}/retry` — retry a failed job from the UI (named `system.batch-jobs.retry`).
+
+### Monitoring & Retry
+
+- Visit `/system/batch-jobs` in the admin area to view recent queued jobs and failed jobs.
+- Failed jobs have a **Retry** button that will move the failed job back to the queue for re-processing.
+
+### Config
+
+- New config file: `config/ai.php` (commit added)
+
+```php
+return [
+    // Number of questions to generate per job batch
+    'questions_batch' => env('AI_QUESTIONS_BATCH', 5),
+];
+```
+
+- Override the batch size with `.env`: `AI_QUESTIONS_BATCH=5` (default 5).
+
+### Running the queue worker
+
+Make sure your queue worker is running to process AI jobs:
+```bash
+php artisan queue:work
+```
+
+### Notes
+
+- Generated questions follow the project's convention: `option1` is always the correct answer.
+- If you expect large generation jobs, increase worker concurrency or use rate-limiting/delays on job dispatch.
+
+
 ### Access Admin Panel
 ```
 http://localhost:8000/home

@@ -65,5 +65,24 @@
                         </nav>
                     </div>
                 @endif
+                @if (auth()->user()->usertype_id == 1)
+                    <a class="nav-link collapsed @if ($active == 'user') active @endif" data-toggle="collapse"
+                        data-target="#collapseSittings" aria-expanded="false" aria-controls="collapseSittings"
+                        href="#collapseSittings">
+                        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                        Sittings
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseSittings" aria-labelledby="headingOne"
+                        data-parent="#sidenavAccordion">
+                    <a class="nav-link @if (isset($active) && $active == 'system') active @endif" href="{{ route('system.batch-jobs.index') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-tasks"></i></div>
+                        Batch Jobs
+                    </a>
+                    <a class="nav-link @if (isset($active) && $active == 'system') active @endif" href="{{ route('settings.index') }}">
+                        <div class="sb-nav-link-icon"><i class="fas fa-tasks"></i></div>
+                        AI Provider
+                    </a>
+                @endif
     </nav>
 </div>

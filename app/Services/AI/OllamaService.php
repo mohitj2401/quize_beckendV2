@@ -24,7 +24,7 @@ class OllamaService implements AIProviderInterface
 
         $prompt = $this->buildQuestionPrompt($topic, $numberOfQuestions, $difficulty);
 
-        $response = Http::timeout(120)->post("{$this->baseUrl}/api/generate", [
+        $response = Http::timeout(300)->post("{$this->baseUrl}/api/generate", [
             'model' => $this->model,
             'prompt' => $prompt,
             'stream' => false,

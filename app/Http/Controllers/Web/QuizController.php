@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\Subject;
+use App\Jobs\GenerateAiQuizJob;
 use Facade\FlareClient\Stacktrace\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File as FacadesFile;
@@ -215,7 +216,7 @@ class QuizController extends Controller
     public function generateWithAI(Request $request)
     {
         //increate request timeout
-        set_time_limit(300);
+        // set_time_limit(300);
         if (!(auth()->user()->can('Create Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
             alert()->error("You Don't Have Enough Permission", 'Request Denied');
             return redirect()->back();
@@ -231,45 +232,29 @@ class QuizController extends Controller
         ]);
 
         try {
-            $openAI = \App\Services\AI\AIServiceFactory::make();
-
-            // Generate quiz metadata
-            $metadata = $openAI->generateQuizMetadata($request->topic);
-
-            // Generate questions
-            $questions = $openAI->generateQuestions(
-                $request->topic,
-                $request->number_of_questions,
-                $request->difficulty
-            );
-
-            // Create quiz
-            $quiz = new Quiz();
-            $quiz->title = $metadata['title'] ?? $request->topic . ' Quiz';
-            $quiz->description = $metadata['description'] ?? 'AI-generated quiz about ' . $request->topic;
-            $quiz->duration = $request->duration;
-            $quiz->access_token = Str::random(8);
-            $quiz->subject_id = $request->subject;
-            $quiz->start_time = $request->start_date ?? now();
-            $quiz->end_time = $request->end_date ?? now()->addDays(30);
-
-            // Handle image upload
-            $imageName = Str::slug($quiz->title) . time() . '.' . $request->image->extension();
+            // Move uploaded image to uploads/quiz and dispatch job with required data
+            $imageName = Str::slug($request->topic) . time() . '.' . $request->image->extension();
             $request->image->move(public_path('uploads/quiz'), $imageName);
-            $quiz->image = 'uploads/quiz/' . $imageName;
+            $imagePath = 'uploads/quiz/' . $imageName;
 
-            // Save quiz
-            auth()->user()->quiz()->save($quiz);
+            $jobPayload = [
+                'user_id' => auth()->user()->id,
+                'topic' => $request->topic,
+                'subject_id' => $request->subject,
+                'number_of_questions' => $request->number_of_questions,
+                'difficulty' => $request->difficulty,
+                'duration' => $request->duration,
+                'image_path' => $imagePath,
+                'start_time' => $request->start_date ?? now(),
+                'end_time' => $request->end_date ?? now()->addDays(30),
+            ];
 
-            // Create questions
-            foreach ($questions as $questionData) {
-                $quiz->question()->create($questionData);
-            }
+            GenerateAiQuizJob::dispatch($jobPayload);
 
-            alert()->success('Quiz Generated Successfully with ' . count($questions) . ' questions!');
-            return redirect()->route('quiz.index');
+            alert()->success('Quiz generation has been queued. You will see it once processing finishes.');
+            return redirect()->route('quiz.view');
         } catch (\Exception $e) {
-            alert()->error('Failed to generate quiz: ' . $e->getMessage());
+            alert()->error('Failed to queue quiz generation: ' . $e->getMessage());
             return back()->withInput();
         }
     }
