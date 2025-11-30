@@ -2,6 +2,11 @@
 
 A comprehensive Laravel-based quiz management system with AI-powered quiz generation capabilities.
 
+## 📱 Companion Mobile App
+
+This backend provides the API endpoints used by the **Quiz App** Flutter project:
+- **Repository**: [https://github.com/mohitj2401/Quiz_app](https://github.com/mohitj2401/Quiz_app)
+
 ## Features
 
 ### Core Features
