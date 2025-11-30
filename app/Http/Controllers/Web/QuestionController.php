@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Imports\ImportQuestions;
+use App\Jobs\CreateQuizQuestionsJob;
 use App\Models\Question;
 use App\Models\Quiz;
 use Illuminate\Contracts\Session\Session;
@@ -158,5 +159,58 @@ class QuestionController extends Controller
         $data['data'] = $quiz->question->toArray();
 
         return $data;
+    }
+
+    /**
+     * Show form to generate questions for a quiz using AI
+     */
+    public function createWithAI($quiz)
+    {
+        $quiz = Quiz::findOrFail($quiz);
+
+        if ($quiz->user_id != auth()->user()->id) {
+            alert()->error("Don't have permission to modify this quiz", 'Request Denied');
+            return redirect()->back();
+        }
+
+        $data['quiz'] = $quiz;
+        $data['active'] = 'question';
+        $data['title'] = 'Generate Questions with AI | Quizie';
+        return view('admin.question-ai-generate', $data);
+    }
+
+    /**
+     * Generate questions for a quiz using AI through job queue
+     */
+    public function generateWithAI(Request $request, $quiz)
+    {
+        $quiz = Quiz::findOrFail($quiz);
+
+        if ($quiz->user_id != auth()->user()->id) {
+            alert()->error("Don't have permission to modify this quiz", 'Request Denied');
+            return redirect()->back();
+        }
+
+        $request->validate([
+            'topic' => 'required|max:255',
+            'number_of_questions' => 'required|integer|min:1|max:50',
+            'difficulty' => 'required|in:easy,medium,hard',
+        ]);
+
+        try {
+            // Dispatch job to generate questions
+            CreateQuizQuestionsJob::dispatch(
+                $quiz->id,
+                $request->topic,
+                $request->number_of_questions,
+                $request->difficulty
+            );
+
+            alert()->success('Question generation has been queued. Questions will be added once processing completes.');
+            return redirect()->route('quiz.view');
+        } catch (\Exception $e) {
+            alert()->error('Failed to queue question generation: ' . $e->getMessage());
+            return back()->withInput();
+        }
     }
 }

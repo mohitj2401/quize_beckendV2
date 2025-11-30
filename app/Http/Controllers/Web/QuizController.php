@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\Subject;
+use App\Jobs\GenerateAiQuizJob;
 use Facade\FlareClient\Stacktrace\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File as FacadesFile;
@@ -100,9 +101,7 @@ class QuizController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Quiz $quiz)
-    {
-    }
+    public function show(Quiz $quiz) {}
 
     /**
      * Show the form for editing the specified resource.
@@ -193,5 +192,70 @@ class QuizController extends Controller
         alert()->success('Quiz Deleted Succesfully');
 
         return back();
+    }
+
+    /**
+     * Show the AI quiz generation form
+     */
+    public function createWithAI()
+    {
+        if (!(auth()->user()->can('Create Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+            return redirect()->back();
+        }
+
+        $data['active'] = 'quiz';
+        $data['title'] = 'Generate Quiz with AI | Quizie';
+        $data['subjects'] = Subject::where('status', 1)->get();
+        return view('admin.quiz-ai-generate', $data);
+    }
+
+    /**
+     * Generate quiz and questions using OpenAI
+     */
+    public function generateWithAI(Request $request)
+    {
+        //increate request timeout
+        // set_time_limit(300);
+        if (!(auth()->user()->can('Create Quiz') || in_array('Owner', auth()->user()->getRoleNames()->toArray()))) {
+            alert()->error("You Don't Have Enough Permission", 'Request Denied');
+            return redirect()->back();
+        }
+
+        $request->validate([
+            'topic' => 'required|max:255',
+            'subject' => 'required',
+            'number_of_questions' => 'required|integer|min:5|max:50',
+            'difficulty' => 'required|in:easy,medium,hard',
+            'duration' => 'required|integer|min:5',
+            'image' => 'required|image|mimes:png,jpg',
+        ]);
+
+        try {
+            // Move uploaded image to uploads/quiz and dispatch job with required data
+            $imageName = Str::slug($request->topic) . time() . '.' . $request->image->extension();
+            $request->image->move(public_path('uploads/quiz'), $imageName);
+            $imagePath = 'uploads/quiz/' . $imageName;
+
+            $jobPayload = [
+                'user_id' => auth()->user()->id,
+                'topic' => $request->topic,
+                'subject_id' => $request->subject,
+                'number_of_questions' => $request->number_of_questions,
+                'difficulty' => $request->difficulty,
+                'duration' => $request->duration,
+                'image_path' => $imagePath,
+                'start_time' => $request->start_date ?? now(),
+                'end_time' => $request->end_date ?? now()->addDays(30),
+            ];
+
+            GenerateAiQuizJob::dispatch($jobPayload);
+
+            alert()->success('Quiz generation has been queued. You will see it once processing finishes.');
+            return redirect()->route('quiz.view');
+        } catch (\Exception $e) {
+            alert()->error('Failed to queue quiz generation: ' . $e->getMessage());
+            return back()->withInput();
+        }
     }
 }

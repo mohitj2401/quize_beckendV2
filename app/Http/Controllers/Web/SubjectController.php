@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Imports\SubjectImport;
+use App\Jobs\GenerateAiQuizJob;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -90,9 +91,72 @@ class SubjectController extends Controller
             $subject->code = $request->code;
             $subject->user_id = auth()->user()->id;
             $subject->save();
-            alert()->success('Subject added successfuly');
+
+            // Check if AI generation is requested
+            if ($request->has('generate_with_ai') && $request->generate_with_ai == '1') {
+                try {
+                    $this->generateAIQuizForSubject($subject, $request);
+                    alert()->success('Subject created and AI quiz generated successfully!');
+                } catch (\Exception $e) {
+                    alert()->warning('Subject created but AI quiz generation failed: ' . $e->getMessage());
+                }
+            } else {
+                alert()->success('Subject added successfully');
+            }
+
             return redirect()->back();
         }
+    }
+
+    /**
+     * Generate AI quiz for a newly created subject
+     */
+    protected function generateAIQuizForSubject(Subject $subject, Request $request)
+    {
+
+         $jobPayload = [
+                'user_id' => auth()->user()->id,
+                'topic' => $subject->name,
+                'subject_id' => $subject->id,
+                'number_of_questions' => $request->number_of_questions,
+                'difficulty' => $request->difficulty,
+                'duration' => $request->duration,
+                'image_path' => 'uploads/quiz/default.jpg',
+                'start_time' => $request->start_date ?? now(),
+                'end_time' => $request->end_date ?? now()->addDays(30),
+            ];
+
+            GenerateAiQuizJob::dispatch($jobPayload);
+        // $aiService = \App\Services\AI\AIServiceFactory::make();
+
+        // // Generate quiz metadata based on subject name
+        // $metadata = $aiService->generateQuizMetadata($subject->name);
+
+        // // Generate questions
+        // $questionCount = $request->ai_question_count ?? 10;
+        // $difficulty = $request->ai_difficulty ?? 'medium';
+        // $questions = $aiService->generateQuestions($subject->name, $questionCount, $difficulty);
+
+        // // Create quiz
+        // $quiz = new \App\Models\Quiz();
+        // $quiz->title = $metadata['title'] ?? $subject->name . ' Quiz';
+        // $quiz->description = $metadata['description'] ?? 'AI-generated quiz about ' . $subject->name;
+        // $quiz->duration = $request->ai_duration ?? 30;
+        // $quiz->access_token = \Illuminate\Support\Str::random(8);
+        // $quiz->subject_id = $subject->id;
+        // $quiz->start_time = now();
+        // $quiz->end_time = now()->addDays(30);
+
+        // // Create a default image path (you may want to use a default image)
+        // $quiz->image = 'uploads/quiz/default.jpg';
+
+        // // Save quiz
+        // auth()->user()->quiz()->save($quiz);
+
+        // // Create questions
+        // foreach ($questions as $questionData) {
+        //     $quiz->question()->create($questionData);
+        // }
     }
 
     /**

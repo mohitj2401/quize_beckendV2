@@ -35,11 +35,19 @@ Route::post('/quiz/{quiz}', [App\Http\Controllers\Web\QuizController::class, 'up
 Route::post('/create/quiz', [App\Http\Controllers\Web\QuizController::class, 'store']);
 Route::get('/quiz/delete/{quiz}', [App\Http\Controllers\Web\QuizController::class, 'destroy'])->name('quiz.delete');
 
+// AI Quiz Generation
+Route::get('/create/quiz/ai', [App\Http\Controllers\Web\QuizController::class, 'createWithAI'])->name('create.quiz.ai');
+Route::post('/generate/quiz/ai', [App\Http\Controllers\Web\QuizController::class, 'generateWithAI'])->name('generate.quiz.ai');
+
+
 
 //Questions
 Route::get('/create/questions/{quiz?}', [App\Http\Controllers\Web\QuestionController::class, 'create'])->name('create.question');
 Route::get('/questions', [App\Http\Controllers\Web\QuestionController::class, 'index'])->name('question.view');
 Route::get('/get/questions/{quiz?}', [App\Http\Controllers\Web\QuestionController::class, 'getQuestion'])->name('question.get');
+
+// AI Question Generation (POST only)
+Route::post('/generate/questions/{quiz}/ai', [App\Http\Controllers\Web\QuestionController::class, 'generateWithAI'])->name('generate.question.ai');
 
 // Route::get('/quiz/{quiz}', [App\Http\Controllers\Web\QuizController::class, 'edit'])->name('quiz.edit');
 // Route::post('/quiz/{quiz}', [App\Http\Controllers\Web\QuizController::class, 'update']);
@@ -89,4 +97,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('add-permission\{role}', [RoleController::class, 'storePermission']);
     Route::resource('permissions', PermissionController::class);
     Route::resource('themes', ThemeController::class);
+
+    // Settings Routes
+    Route::get('settings', [\App\Http\Controllers\Web\SettingsController::class, 'index'])->name('settings.index');
+    Route::post('settings/ai-provider', [\App\Http\Controllers\Web\SettingsController::class, 'updateAIProvider'])->name('settings.ai-provider');
+    Route::post('settings/test-provider', [\App\Http\Controllers\Web\SettingsController::class, 'testProvider'])->name('settings.test-provider');
+    // System / Batch Jobs
+    Route::get('system/batch-jobs', [\App\Http\Controllers\Web\System\BatchJobController::class, 'index'])->name('system.batch-jobs.index');
+    Route::post('system/batch-jobs/{id}/retry', [\App\Http\Controllers\Web\System\BatchJobController::class, 'retry'])->name('system.batch-jobs.retry');
 });
